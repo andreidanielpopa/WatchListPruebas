@@ -1,0 +1,48 @@
+﻿@model ListaContenidoValorado
+
+@{
+    ViewData["Title"] = "Movie UI";
+}
+
+<span class="h-px w-full bg-slate-800" />
+
+<div class="flex min-h-96 items-center justify-between bg-slate-900 text-white">
+    <!-- Featured Movie -->
+    <div>
+        <h2 id="featured-title" class="text-5xl font-bold">¿Que es <span class="text-yellow-400">WATCHLIST</span>?</h2>
+        <p id="featured-description" class="mt-3 text-gray-300">Es una web creada para que puedas compartir tus películas y series favoritas con todo el mundo</p>
+    </div>
+</div>
+
+<span class="h-px w-full bg-slate-800" />
+
+<!-- Movie Carousel -->
+<div class="bg-slate-900 py-5">
+    <h3 class="mb-4 text-2xl font-bold">Pelicuas Populares</h3>
+    <div class="flex justify-between space-x-4 overflow-x-auto">
+        @foreach (var movie in Model.Peliculas)
+        {
+            <a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@movie.Id_Contenido">
+                <div class="movie-item w-40 flex-shrink-0 cursor-pointer" data-title="@movie.Titulo" data-image="@movie.Imagen">
+                    <img src="~/images/posters/@movie.Imagen" alt="@movie.Titulo" class="rounded-lg" />
+                    <p class="mt-2 text-center text-sm">@movie.Titulo</p>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+<div class="bg-slate-900 py-5">
+    <h3 class="mb-4 text-2xl font-bold">Series Populares</h3>
+    <div class="flex justify-between space-x-4 overflow-x-auto">
+        @foreach (var serie in Model.Series)
+        {
+            <a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@serie.Id_Contenido">
+                <div class="serie-item w-40 flex-shrink-0 cursor-pointer" data-title="@serie.Titulo" data-image="@serie.Imagen">
+                    <img src="~/images/posters/@serie.Imagen" alt="@serie.Titulo" class="rounded-lg" />
+                    <p class="mt-2 text-center text-sm">@serie.Titulo</p>
+                </div>
+            </a>
+        }
+    </div>
+</div>

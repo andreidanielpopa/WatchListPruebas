@@ -1,0 +1,106 @@
+﻿@model ViewContenidoCompleto
+
+@{
+    var directoresValidos = Model.Directores.Where(d => d.Nombre != "-").ToList();
+}
+
+<div class="mx-auto mt-10 max-w-4xl rounded-lg bg-gray-900 p-6 text-white shadow-lg">
+    <!-- Contenedor principal -->
+    <div class="flex items-start gap-4 max-md:flex-col max-md:items-center max-md:gap-6">
+        <!-- Imagen del contenido -->
+        <img src="~/images/posters/@Model.Imagen" alt="@Model.Nombre" class="h-72 w-52 rounded-lg object-cover shadow-lg">
+
+        <!-- Contenedor del texto -->
+        <div class="flex flex-col">
+            <div class="flex flex-wrap gap-3">
+                <h1 class="text-3xl font-bold text-yellow-400">@Model.Nombre</h1>
+                @foreach (var categoria in Model.Categorias)
+                {
+                    <span class="rounded-full border-[1px] border-slate-600/70 bg-slate-700/70 px-3 py-1 text-slate-400/80">@categoria.Nombre</span>
+                }
+            </div>
+            <p class="mt-2 text-gray-300">@Model.Descripcion</p>
+        </div>
+    </div>
+
+    <!-- Temporadas y capítulos -->
+    <div class="mt-6 flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-yellow-400">Temporadas</h2>
+        @foreach (var temporada in Model.Temporadas)
+        {
+            <div class="gap-4 rounded-lg bg-gray-800 p-4">
+                <div id="toggleSeason_@temporada.NumeroTemporada" class="flex cursor-pointer items-center gap-3">
+                    <h3 class="text-lg font-semibold text-white">@temporada.TituloTemporada</h3>
+                    <span class="h-[1px] flex-1 bg-slate-700"></span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M6 9l6 6l6 -6" />
+                    </svg>
+                </div>
+                <div id="seasonList_@temporada.NumeroTemporada" class="grid-rows-[0fr] transition-[grid-template-rows] grid duration-500">
+                    <ul class="mt-2 list-inside list-decimal overflow-hidden text-gray-300">
+                        @foreach (var capitulo in temporada.Capitulos)
+                        {
+                            <li>@capitulo.TituloCapitulo (@capitulo.Duracion min)</li>
+                        }
+                    </ul>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        const toggleSeason = $("#toggleSeason_@temporada.NumeroTemporada");
+                        const seasonList = $("#seasonList_@temporada.NumeroTemporada");
+                        toggleSeason.on("click", function () {
+                            toggleSeason.find('svg').toggleClass('rotate-180');
+                            seasonList.toggleClass('grid-rows-[1fr]');
+                        });
+                    });
+                </script>
+            </div>
+        }
+    </div>
+
+    @if (directoresValidos.Any())  // Si hay directores válidos, renderizar el div
+    {
+        <div class="mt-4">
+            <h2 class="text-xl font-bold text-yellow-400">Directores</h2>
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+                @foreach (var director in directoresValidos)
+                {
+                    <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
+                        <img src="~/images/directores/@director.ImagenDirector" class="mx-auto h-24 w-24 rounded-full object-cover">
+                        <p class="mt-2 font-semibold text-white">@director.Nombre</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Actores en Cards -->
+    <div class="mt-4">
+        <h2 class="text-xl font-bold text-yellow-400">Actores</h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+            @foreach (var actor in Model.Actores)
+            {
+                <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
+                    <img src="~/images/actores/@actor.ImagenActor" class="mx-auto h-24 w-24 rounded-full object-cover">
+                    <p class="mt-2 font-semibold text-white">@actor.Nombre</p>
+                    <p class="text-sm text-gray-400">@actor.NombrePersonaje</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Plataformas en Cards -->
+    <div class="mt-4">
+        <h2 class="text-xl font-bold text-yellow-400">Disponible en</h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+            @foreach (var plataforma in Model.Plataformas)
+            {
+                <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
+                    <img src="~/images/plataformas/@plataforma.ImagenPlataforma" class="mx-auto h-16 w-16 object-cover">
+                    <p class="mt-2 font-semibold text-white">@plataforma.Nombre</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

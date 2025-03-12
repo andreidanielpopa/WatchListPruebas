@@ -1,0 +1,41 @@
+﻿@model List<ViewListadoUsuarios>
+@{
+    string user = Context.Session.GetString("usuario");
+
+    ViewListaAmigos amigos = ViewData["amigos"] as ViewListaAmigos;
+    ViewListaAmigos pendientes = ViewData["pendientes"] as ViewListaAmigos;
+}
+<div class="bg-slate-900 py-5">
+    <div class="grid grid-cols-4 gap-4 max-sm:grid-cols-2 max-lg:grid-cols-3 max-[450px]:grid-cols-1">
+        @foreach (var usuario in Model)
+        {
+            if (usuario.IdUsuario.ToString() != user)
+            {
+                <div class="usuario-item rounded-lg bg-gray-800 p-4">
+                    <a asp-controller="Usuarios" asp-action="Perfil" asp-route-idusuario="@usuario.IdUsuario" class="block cursor-pointer">
+                        <img src="~/images/perfil/@usuario.NombreArchivoFoto" alt="@usuario.Nombre" class="mx-auto h-20 w-20 rounded-full" />
+                        <h4 class="mt-2 text-center text-lg font-semibold">@usuario.Nombre</h4>
+                        <p class="text-center text-sm">Contenidos vistos: @usuario.ContenidosVistos</p>
+                        <p class="text-center text-sm">Listas creadas: @usuario.NumeroListas</p>
+                        <p class="text-center text-sm">Amigos: @usuario.NumeroAmigos</p>
+                    </a>
+                    @if (amigos != null && amigos.Amigos.Any(a => a.Id == usuario.IdUsuario))
+                    {
+                        <p class="mt-2 text-center text-sm">Ya sois amigos</p>
+                    }
+                    else if (pendientes != null && pendientes.Amigos.Any(p => p.Id == usuario.IdUsuario))
+                    {
+                        <p class="mt-2 text-center text-sm">Solicitud pendiente</p>
+                    }
+                    else
+                    {
+                        <a asp-controller="Usuarios" asp-action="AddAmigo" asp-route-idusuario1="@user" asp-route-idusuario2="@usuario.IdUsuario"
+                           class="mt-2 block rounded bg-blue-500 px-1 py-1 text-center text-sm text-white transition duration-300 hover:bg-blue-700">
+                            Añadir amigo
+                        </a>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

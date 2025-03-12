@@ -1,0 +1,34 @@
+﻿<div class="mx-auto max-w-md rounded-lg bg-white p-6 text-stone-950 shadow-md">
+    <h1 class="mb-4 text-2xl font-bold text-gray-800">Create lista</h1>
+
+    <form method="post" class="space-y-4">
+        <div>
+            <label class="block font-medium text-gray-700">Nombre</label>
+            <input type="text" name="nombre" value="" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+            <label class="block font-medium text-gray-700">Id Usuario</label>
+            <input type="text" name="idusuario" value="@Context.Session.GetString("usuario")" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+            <label class="block font-medium text-gray-700">Tipo de lista</label>
+            <input type="text" name="idtipolista" value="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <input type="hidden" name="esadmin" value="1" />
+
+        <div>
+            <label class="block font-medium text-gray-700">Publica o privada</label>
+            <select name="espublica" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="1">Pública</option>
+                <option value="0">Privada</option>
+            </select>
+        </div>
+
+        <button type="submit" class="w-full rounded-md bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
+            Crear lista
+        </button>
+    </form>
+</div>

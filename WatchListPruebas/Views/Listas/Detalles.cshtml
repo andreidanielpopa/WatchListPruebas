@@ -1,0 +1,28 @@
+﻿@model ViewDetalleListaReproduccion
+
+<div class="mx-auto max-w-4xl rounded-lg bg-gray-800 p-6 shadow-md">
+	<h1 class="text-yellow-400">@Model.NombreLista</h1> 
+	<div class="mt-4 text-3xl font-bold">
+		<h2 class="mb-2 text-lg font-semibold text-yellow-400">Contenidos en la lista:</h2>
+
+
+		<div class="grid grid-cols-6 gap-4">
+			@foreach (var contenido in Model.Contenidos)
+			{
+				<a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@contenido.IdContenido">
+					<div class="contenido-item cursor-pointer">
+						<img src="~/images/posters/@contenido.ImagenContenido" alt="@contenido.Titulo" class="w-full rounded-lg" />
+						<p class="mt-2 text-center text-sm"> @contenido.Titulo</p>
+					</div>
+				</a>
+			}
+			<a asp-controller="Listas" asp-action="InsertContenidoLista" asp-route-idlista="@Model.IdLista" class="text font-extrabold text-white">Añadir contenido</a>
+		</div>
+
+	</div>
+
+	<a href="@Url.Action("Index", "Listas")"
+	   class="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700">
+		Volver a Listas
+	</a>
+</div>

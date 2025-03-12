@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WatchListPruebas</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+
+    <!-- Otros estilos personalizados -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WatchListPruebas.styles.css" asp-append-version="true" />
+    
+    <!-- JQery -->
+    <script src="~/lib/jquery/dist/jquery.js" asp-append-version="true"></script>
+</head>
+<body class="min-h-screen bg-slate-900 text-white">
+
+    <!-- Navbar -->
+    <nav class="z-10 mx-auto flex w-11/12 max-w-6xl items-center justify-between bg-slate-900 bg-opacity-80 py-5">
+        <h1 class="text-xl font-bold text-yellow-400"><a asp-controller="Home" asp-action="Privacy">WATCH<span class="text-white">LIST</span></a></h1>
+        <div class="flex items-center gap-4 max-[450px]:gap-0">
+            <ul class="flex space-x-6 font-semibold max-lg:hidden">
+                <li class="cursor-pointer"><a asp-controller="Contenidos" asp-action="ListadoContenidos" asp-route-idcontenido="1">SERIES</a></li>
+                <li class="cursor-pointer"><a asp-controller="Contenidos" asp-action="ListadoContenidos" asp-route-idcontenido="2">PELICULAS</a></li>
+                <li class="cursor-pointer"> <a asp-controller="Listas" asp-action="Index">LISTAS</a></li>
+                <li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="Index">USUARIOS</a></li>
+                <partial name="_MenuUsuario" />
+            </ul>
+            <div class="relative">
+                <input class="rounded-full border-[1px] border-slate-600 bg-slate-700 p-2 px-3 py-1 max-[450px]:w-40" type="text" id="searchInput" placeholder="Buscar contenidos..." autocomplete="off" />
+                <ul class="absolute right-[12px] top-[50px] rounded-md bg-slate-800" id="suggestions"></ul>
+            </div>
+            @* Responsive menu *@
+            <div class="relative lg:hidden">
+                <div class="flex items-center gap-4">
+                    <button id="menuToggle" class="group relative">
+                        <div class="relative flex h-[50px] w-[50px] transform items-center justify-center overflow-hidden transition-all duration-200">
+                            <div class="flex h-[20px] w-[20px] origin-center transform flex-col justify-between overflow-hidden transition-all duration-300">
+                                <div class="h-[2px] w-7 origin-left transform bg-white transition-all duration-300 group-[.active]:translate-x-10"></div>
+                                <div class="h-[2px] w-7 transform rounded bg-white transition-all delay-75 duration-300 group-[.active]:translate-x-10"></div>
+                                <div class="h-[2px] w-7 origin-left transform bg-white transition-all delay-150 duration-300 group-[.active]:translate-x-10"></div>
+
+                                <div class="-translate-x-10 absolute top-2.5 flex w-0 transform items-center justify-between transition-all duration-500 group-[.active]:translate-x-0 group-[.active]:w-12">
+                                    <div class="absolute h-[2px] w-5 rotate-0 transform bg-white transition-all delay-300 duration-500 group-[.active]:rotate-45"></div>
+                                    <div class="-rotate-0 absolute h-[2px] w-5 transform bg-white transition-all delay-300 duration-500 group-[.active]:-rotate-45"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div id="responsiveMenu" class="absolute right-[12px] top-[50px] hidden w-[200px] rounded-md bg-slate-800 p-4 shadow-md">
+                    <ul class="flex flex-col items-start gap-4 font-semibold">
+                        <li class="cursor-pointer"><a asp-controller="Contenidos" asp-action="ListadoContenidos" asp-route-idcontenido="1">SERIES</a></li>
+                        <li class="cursor-pointer"><a asp-controller="Contenidos" asp-action="ListadoContenidos" asp-route-idcontenido="2">PELICULAS</a></li>
+                        <li class="cursor-pointer"> <a asp-controller="Listas" asp-action="Index">LISTAS</a></li>
+                        <li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="Index">USUARIOS</a></li>
+                        <partial name="_MenuUsuario" />
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+
+    <div class="w-full">
+        <main role="main" class="mx-auto w-11/12 max-w-6xl pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script>
+        // Menú responsive
+        const toggleButtonStyles = () => {
+            const menuButton = document.getElementById("menuToggle");
+            menuButton.classList.toggle("active");
+            const responsiveMenu = document.getElementById("responsiveMenu");
+            responsiveMenu.classList.toggle('hidden');
+        }
+
+        document.getElementById("menuToggle")?.addEventListener("click", function () {
+            toggleButtonStyles();
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            // Al escribir en el input, se realiza la búsqueda
+            $('#searchInput').keyup(function () {
+                var query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("Buscar", "Contenidos")',
+                        data: { query: query },
+                        success: function (resultados) {
+                            $('#suggestions').empty();
+                            $.each(resultados, function (index, item) {
+                                // Se crea cada elemento con data-id y una clase para indicar que es clickeable
+                                $('#suggestions').append('<li data-id="' + item.id + '" class="cursor-pointer p-2 hover:bg-blue-100">' + item.titulo + '</li>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#suggestions').empty();
+                }
+            });
+
+            // Al hacer clic en alguna sugerencia, se asigna el id al input oculto
+            $('#suggestions').on('click', 'li', function () {
+                var selectedId = $(this).data('id');
+                var selectedTitle = $(this).text();
+                // Asigna el id al input oculto
+                $('#idcontenido').val(selectedId);
+                // Opcional: muestra el título en el input de búsqueda
+                $('#searchInput').val(selectedTitle);
+                // Limpia la lista de sugerencias
+                $('#suggestions').empty();
+            });
+        });
+    </script>
+
+
+    <!-- Scripts personalizados -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,46 @@
+﻿@model ModelViewListaAmigos
+
+@{
+	string user = Context.Session.GetString("usuario");
+}
+
+<div class="container mx-auto px-4 py-8">
+	<h1 class="mb-8 text-center text-3xl font-bold">Mis Amigos</h1>
+	<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+		@foreach (var amigo in Model.ListaAceptados.Amigos)
+		{
+			<div class="flex flex-col items-center rounded-lg bg-slate-800 p-4 shadow">
+                <img class="mb-4 h-24 w-24 rounded-full object-cover" src="~/images/perfil/@amigo.FotoPerfil" alt="Foto de @amigo.Nombre" />
+				<h2 class="text-xl font-semibold">@amigo.Nombre</h2>
+			</div>
+		}
+	</div>
+
+    <h1 class="mb-8 text-center text-3xl font-bold">Pendientes</h1>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        @foreach (var amigo in Model.ListaPendientes.Amigos)
+        {
+            <div class="flex flex-col items-center rounded-lg bg-slate-800 p-4 shadow">
+                <img class="mb-4 h-24 w-24 rounded-full object-cover" src="~/images/perfil/@amigo.FotoPerfil" alt="Foto de @amigo.Nombre" />
+                <h2 class="text-xl font-semibold">@amigo.Nombre</h2>
+                @if (int.Parse(user) == amigo.IdUsuario1)
+                {
+                    <p class="mt-2 text-center text-sm">Pendiente de aceptar</p>
+                }
+                else
+                {
+                    <a asp-controller="Usuarios" asp-action="AccionSolicitud" asp-route-idusuario1="@user" asp-route-idusuario2="@amigo.Id" asp-route-accion="2"
+                       class="mt-2 block rounded bg-blue-500 px-1 py-1 text-center text-sm text-white transition duration-300 hover:bg-blue-700">
+                        Aceptar
+                    </a>
+                    <a asp-controller="Usuarios" asp-action="AccionSolicitud" asp-route-idusuario1="@user" asp-route-idusuario2="@amigo.Id" asp-route-accion="3"
+                       class="mt-2 block rounded bg-blue-500 px-1 py-1 text-center text-sm text-white transition duration-300 hover:bg-blue-700">
+                        Rechazar
+                    </a>
+                }
+            </div>
+        }
+    </div>
+
+
+</div>

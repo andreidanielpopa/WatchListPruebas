@@ -1,0 +1,22 @@
+﻿@{
+    string usuario = Context.Session.GetString("usuario");
+}
+
+@if (usuario == null)
+{
+    <li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="LogIn">LOG IN</a> </li>
+}
+else
+{
+    <li class="cursor-pointer">
+        <a asp-controller="Usuarios" asp-action="Perfil">
+            @usuario
+        </a>
+    </li>
+
+    <li class="cursor-pointer">
+        <a asp-controller="Usuarios" asp-action="LogOut">
+            LOG OUT @usuario
+        </a>
+    </li>
+}
