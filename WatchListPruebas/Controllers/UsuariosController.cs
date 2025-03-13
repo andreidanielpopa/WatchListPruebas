@@ -162,7 +162,7 @@ namespace WatchListPruebas.Controllers
 
             await repo.CrearUsuarioAsync(nombreCompleto, nombreUsuario, email, contrasena, idFotoPerfil);
 
-            return RedirectToAction("Login", "Usuarios");
+            return RedirectToAction("Perfil", "Usuarios");
 
         }
     }
