@@ -40,6 +40,10 @@ namespace WatchListPruebas.Models
         [Column("temporadas")]
         public string? TemporadasJson { get; set; }
 
+        // NUEVA PROPIEDAD: Valoraciones en JSON
+        [Column("valoraciones")]
+        public string? ValoracionesJson { get; set; }
+
         // Propiedades deserializadas (No mapeadas en la base de datos)
         [NotMapped]
         public List<Categoria> Categorias => DeserializeJson<Categoria>(CategoriasJson);
@@ -56,6 +60,10 @@ namespace WatchListPruebas.Models
         [NotMapped]
         public List<Temporada> Temporadas => DeserializeJson<Temporada>(TemporadasJson);
 
+        // NUEVA PROPIEDAD deserializada para Valoraciones
+        [NotMapped]
+        public List<ValoracionView> Valoraciones => DeserializeJson<ValoracionView>(ValoracionesJson);
+
         // Método genérico para deserializar JSON
         private List<T> DeserializeJson<T>(string json)
         {
@@ -71,40 +79,40 @@ namespace WatchListPruebas.Models
     public class Director
     {
         public string Nombre { get; set; }
-
         public string ImagenDirector { get; set; }
     }
     public class Actor
     {
         public string Nombre { get; set; }
-
         public string NombrePersonaje { get; set; }
-
         public string ImagenActor { get; set; }
     }
-
     public class Plataforma
     {
         public string Nombre { get; set; }
-
         public string ImagenPlataforma { get; set; }
     }
-
     public class Temporada
     {
-
+        public int IdTemporada { get; set; }
         public int NumeroTemporada { get; set; }
-
         public string TituloTemporada { get; set; }
-
         public List<Capitulo> Capitulos { get; set; } = new();
     }
-
-    
     public class Capitulo
     {
+        public int IdCapitulo { get; set; }
         public string TituloCapitulo { get; set; }
         public int Duracion { get; set; }
     }
+    
+    // NUEVA CLASE: Valoracion
+    public class ValoracionView
+    {
+        public int IdValoracion { get; set; }
+        public string NombreUsuario { get; set; }
+        public int Nota { get; set; }
+        public string Opinion { get; set; }
+        public DateTime FechaCreacion { get; set; }
+    }
 }
-

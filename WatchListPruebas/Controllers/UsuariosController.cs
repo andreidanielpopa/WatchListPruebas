@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using WatchListPruebas.Models;
 using WatchListPruebas.Repositories;
+using WatchListPruebas.Filters;
 
 namespace WatchListPruebas.Controllers
 {
@@ -13,15 +17,16 @@ namespace WatchListPruebas.Controllers
             this.repo = repo;
         }
 
+        [AuthorizeUsuarios]
         public async Task<IActionResult> Index()
         {
             List<ViewListadoUsuarios> listUsers = await this.repo.GetListadoUsuariosAsync();
 
-            if (HttpContext.Session.GetString("usuario") != null)
+            if (User.FindFirst(ClaimTypes.NameIdentifier).Value != null)
             {
-                int usuario = int.Parse(HttpContext.Session.GetString("usuario"));
+                int usuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-                ViewListaAmigos amigos = await this.repo.FindAmigosByUserId(usuario,2);
+                ViewListaAmigos amigos = await this.repo.FindAmigosByUserId(usuario, 2);
 
                 ViewData["amigos"] = amigos;
 
@@ -35,7 +40,7 @@ namespace WatchListPruebas.Controllers
 
                 ViewData["pendientes"] = null;
             }
-            
+
             return View(listUsers);
         }
 
@@ -45,32 +50,82 @@ namespace WatchListPruebas.Controllers
         }
 
         [HttpPost]
-        public IActionResult LogIn(string usuario)
+        public async Task<IActionResult> LogIn(string nombreUsuario, string password)
         {
-            HttpContext.Session.SetString("usuario", usuario);
-            return RedirectToAction("Perfil");
+            Usuario user = await this.repo.LoginAsync(nombreUsuario, password);
+
+            if (user != null)
+            {
+                ClaimsIdentity identity = new ClaimsIdentity(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                        ClaimTypes.Name,
+                        ClaimTypes.Role
+                    );
+
+
+                Claim claimId = new Claim(ClaimTypes.NameIdentifier, user.IdUsuario.ToString());
+                Claim claimName = new Claim(ClaimTypes.Name, user.NombreUsuario);
+
+                identity.AddClaim(claimName);
+                identity.AddClaim(claimId);
+
+                ClaimsPrincipal userPrincipal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
+
+                string controller = TempData["controller"].ToString();
+                string action = TempData["action"].ToString();
+
+                if (TempData["id"] != null)
+                {
+                    string id = TempData["id"].ToString();
+
+                    return RedirectToAction(action, controller, new { id = id });
+                }
+                else
+                {
+
+                    return RedirectToAction(action, controller);
+                }
+
+            }
+            else
+            {
+                ViewData["mensaje"] = "Usuario/Pass incorrectos";
+                return View();
+            }
         }
 
-        public IActionResult LogOut()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("usuario");
-            return RedirectToAction("LogIn");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+            return RedirectToAction("Privacy", "Home");
         }
 
+        [AuthorizeUsuarios]
         public async Task<IActionResult> Perfil()
         {
-            int usuario = int.Parse(HttpContext.Session.GetString("usuario"));
+            var usuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            List<ViewListaReproduccion> listasLikeadas = await repo.GetViewListasLikeadasAsync(usuario);
+            ViewData["listaslikeadas"] = listasLikeadas;
 
             UsuariosListasReproduccion user = await this.repo.FindUsuarioById(usuario);
             return View(user);
         }
 
+        public async Task<IActionResult> DetallePerfil(int idUsuario)
+        {
+            UsuariosListasReproduccion user = await this.repo.FindUsuarioById(idUsuario);
+            return View(user);
+        }
+
         public async Task<IActionResult> Amigos()
         {
-            int usuario = int.Parse(HttpContext.Session.GetString("usuario"));
+            int usuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             ViewListaAmigos pendientes = await this.repo.FindAmigosByUserId(usuario, 1);
-            ViewListaAmigos amigos = await this.repo.FindAmigosByUserId(usuario,2);
+            ViewListaAmigos amigos = await this.repo.FindAmigosByUserId(usuario, 2);
 
             ModelViewListaAmigos listaAmigos = new ModelViewListaAmigos
             {
@@ -93,6 +148,22 @@ namespace WatchListPruebas.Controllers
             await this.repo.AccionSolicitudAmistadAsync(idUsuario1, idUsuario2, accion);
 
             return RedirectToAction("Amigos");
+        }
+
+        public IActionResult Registro()
+        {
+            return View();
+        }
+
+        // Acción POST para procesar el registro
+        [HttpPost]
+        public async Task<IActionResult> Registro(string nombreCompleto, string nombreUsuario, string email, string contrasena, int idFotoPerfil)
+        {
+
+            await repo.CrearUsuarioAsync(nombreCompleto, nombreUsuario, email, contrasena, idFotoPerfil);
+
+            return RedirectToAction("Login", "Usuarios");
+
         }
     }
 }

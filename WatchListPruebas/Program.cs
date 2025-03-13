@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using WatchListPruebas.Data;
 using WatchListPruebas.Repositories;
@@ -5,7 +6,7 @@ using WatchListPruebas.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(x => x.EnableEndpointRouting = false).AddSessionStateTempDataProvider();
 
 builder.Services.AddTransient<RepositoryWatchlist>();
 
@@ -15,6 +16,15 @@ builder.Services.AddDbContext<WatchlistContext>(options => options.UseSqlServer(
 
 builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
+
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    x.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}
+).AddCookie();
 
 var app = builder.Build();
 
@@ -27,18 +37,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
-
+app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapStaticAssets();
-
 app.UseSession();
+app.UseMvc(routes =>
+{
+    routes.MapRoute(
+        name: "default",
+        template: "{controller=Home}/{action=Privacy}/{id?}");
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Privacy}/{id?}")
-    .WithStaticAssets();
-
+    
+});
 
 app.Run();

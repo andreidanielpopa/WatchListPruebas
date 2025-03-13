@@ -1,48 +1,82 @@
 ﻿@model ListaContenidoValorado
 
 @{
-    ViewData["Title"] = "Movie UI";
+	ViewData["Title"] = "Movie UI";
+	List<ViewListaReproduccion> topListas = ViewData["toplistas"] as List<ViewListaReproduccion>;
 }
 
 <span class="h-px w-full bg-slate-800" />
 
 <div class="flex min-h-96 items-center justify-between bg-slate-900 text-white">
-    <!-- Featured Movie -->
-    <div>
-        <h2 id="featured-title" class="text-5xl font-bold">¿Que es <span class="text-yellow-400">WATCHLIST</span>?</h2>
-        <p id="featured-description" class="mt-3 text-gray-300">Es una web creada para que puedas compartir tus películas y series favoritas con todo el mundo</p>
-    </div>
+	<!-- Featured Movie -->
+	<div>
+		<h2 id="featured-title" class="text-5xl font-bold">¿Que es <span class="text-yellow-400">WATCHLIST</span>?</h2>
+		<p id="featured-description" class="mt-3 text-justify text-gray-300">Es una web creada para que puedas compartir tus películas y series favoritas con todo el mundo. Entre otras cosas podras:</p>
+		<ul>
+			<li>Poner nota a un contenido.</li>
+			<li>Añadir un comentario sobre qué te ha parecido.</li>
+			<li>Crear listas de reproducción tanto públicas como privadas.</li>
+			<li>Crear listas compartidas con tus amigos.</li>
+			<li>Consultar detalles de un contenido.</li>
+			<li>Guardar el progreso que llevas de un contenido visto.</li>
+		</ul>
+
+	</div>
 </div>
 
 <span class="h-px w-full bg-slate-800" />
 
 <!-- Movie Carousel -->
 <div class="bg-slate-900 py-5">
-    <h3 class="mb-4 text-2xl font-bold">Pelicuas Populares</h3>
-    <div class="flex justify-between space-x-4 overflow-x-auto">
-        @foreach (var movie in Model.Peliculas)
-        {
-            <a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@movie.Id_Contenido">
-                <div class="movie-item w-40 flex-shrink-0 cursor-pointer" data-title="@movie.Titulo" data-image="@movie.Imagen">
-                    <img src="~/images/posters/@movie.Imagen" alt="@movie.Titulo" class="rounded-lg" />
-                    <p class="mt-2 text-center text-sm">@movie.Titulo</p>
-                </div>
-            </a>
-        }
-    </div>
+	<h3 class="mb-4 text-2xl font-bold">Pelicuas Mejor Valoradas</h3>
+	<div class="grid grid-cols-6 justify-between gap-4 max-sm:grid-cols-2 max-xl:grid-cols-3">
+		@foreach (var movie in Model.Peliculas)
+		{
+			<a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@movie.Id_Contenido">
+				<div class="movie-item h-full cursor-pointer" data-title="@movie.Titulo" data-image="@movie.Imagen">
+					<img src="~/images/posters/@movie.Imagen" alt="@movie.Titulo" class="aspect-[2/3] w-full rounded-lg object-cover" />
+					<p class="mt-2 text-center text-sm">@movie.Titulo</p>
+				</div>
+			</a>
+		}
+	</div>
 </div>
 
 <div class="bg-slate-900 py-5">
-    <h3 class="mb-4 text-2xl font-bold">Series Populares</h3>
-    <div class="flex justify-between space-x-4 overflow-x-auto">
-        @foreach (var serie in Model.Series)
-        {
-            <a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@serie.Id_Contenido">
-                <div class="serie-item w-40 flex-shrink-0 cursor-pointer" data-title="@serie.Titulo" data-image="@serie.Imagen">
-                    <img src="~/images/posters/@serie.Imagen" alt="@serie.Titulo" class="rounded-lg" />
-                    <p class="mt-2 text-center text-sm">@serie.Titulo</p>
-                </div>
-            </a>
-        }
-    </div>
+	<h3 class="mb-4 text-2xl font-bold">Series Mejor Valoradas</h3>
+	<div class="grid grid-cols-6 justify-between gap-4 max-sm:grid-cols-2 max-xl:grid-cols-3">
+		@foreach (var serie in Model.Series)
+		{
+			<a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@serie.Id_Contenido">
+				<div class="serie-item h-full cursor-pointer" data-title="@serie.Titulo" data-image="@serie.Imagen">
+					<img src="~/images/posters/@serie.Imagen" alt="@serie.Titulo" class="aspect-[2/3] w-full rounded-lg object-cover" />
+					<p class="mt-2 text-center text-sm">@serie.Titulo</p>
+				</div>
+			</a>
+		}
+	</div>
 </div>
+
+<div class="bg-slate-900 py-5">
+	<h3 class="mb-4 text-2xl font-bold">Listas Mejor Valoradas</h3>
+	<div class="grid grid-cols-6 gap-4 max-sm:grid-cols-2 max-md:grid-cols-3 max-xl:grid-cols-3">
+		@foreach (var lista in topListas)
+		{
+			<a asp-controller="Listas" asp-action="Detalles" asp-route-id="@lista.IdLista">
+				<div class="lista-item h-full cursor-pointer rounded-lg bg-gray-800 p-2">
+					<!-- Poster compuesto por 4 imágenes en grid de 2x2 -->
+					<div class="grid grid-cols-2 grid-rows-2 gap-1">
+						<img src="~/images/posters/@lista.Imagen1" alt="Imagen 1" class="aspect-[2/3] w-full rounded-tl-lg object-cover" />
+						<img src="~/images/posters/@lista.Imagen2" alt="Imagen 2" class="aspect-[2/3] w-full rounded-tr-lg object-cover" />
+						<img src="~/images/posters/@lista.Imagen3" alt="Imagen 3" class="aspect-[2/3] w-full rounded-bl-lg object-cover" />
+						<img src="~/images/posters/@lista.Imagen4" alt="Imagen 4" class="aspect-[2/3] w-full rounded-br-lg object-cover" />
+					</div>
+					<!-- Nombre de la lista y número de likes -->
+					<p class="mt-2 text-center text-sm text-white">@lista.NombreLista</p>
+					<p class="text-center text-sm text-gray-400">Likes: @lista.NumeroLikes</p>
+				</div>
+			</a>
+		}
+	</div>
+</div>
+

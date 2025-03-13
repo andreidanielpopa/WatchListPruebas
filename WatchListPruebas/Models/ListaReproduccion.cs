@@ -26,12 +26,8 @@ namespace WatchListPruebas.Models
         [Column("fechaCreacion")]
         public DateTime FechaCreacion { get; set; }
 
-        // es_admin
-        [Column("esAdmin")]
-        public int? EsAdmin { get; set; }
-
         // es_publica
         [Column("esPublica")]
-        public int EsPublica { get; set; }
+        public bool EsPublica { get; set; }
     }
 }

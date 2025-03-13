@@ -1,0 +1,59 @@
+﻿@model WatchListPruebas.Models.UsuariosListasReproduccion
+
+<div class="mx-auto mt-10 max-w-lg rounded-md bg-gray-800 p-6 shadow-md">
+	<h2 class="mb-4 text-2xl font-bold">Detalles del Usuario</h2>
+	<img class="mb-4 h-24 w-24 rounded-full object-cover" src="~/images/perfil/@Model.User.FotoPerfil" alt="Foto de @Model.User.NombreUsuario" />
+	<div class="mb-3">
+		<span class="font-semibold">Nombre Completo:</span>
+		<span>@Model.User.NombreCompleto</span>
+	</div>
+	<div class="mb-3">
+		<span class="font-semibold">Nombre Usuario:</span>
+		<span>@Model.User.NombreUsuario</span>
+	</div>
+</div>
+
+<h1>Listas de reproduccion</h1>
+
+<div class="grid grid-cols-6 gap-4 max-sm:grid-cols-2 max-md:grid-cols-3 max-lg:grid-cols-4">
+
+	@foreach (var lista in Model.ListasUser)
+	{
+		<a asp-controller="Listas" asp-action="Detalles" asp-route-id="@lista.IdLista">
+			<div class="lista-item h-full cursor-pointer rounded-lg bg-gray-800 p-2">
+				<!-- Poster compuesto por 4 imágenes en grid de 2x2 -->
+				<div class="grid grid-cols-2 grid-rows-2 gap-1">
+					<img src="~/images/posters/@lista.Imagen1" alt="Imagen 1" class="aspect-[2/3] w-full rounded-tl-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen2" alt="Imagen 2" class="aspect-[2/3] w-full rounded-tr-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen3" alt="Imagen 3" class="aspect-[2/3] w-full rounded-bl-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen4" alt="Imagen 4" class="aspect-[2/3] w-full rounded-br-lg object-cover" />
+				</div>
+				<!-- Nombre de la lista y número de likes -->
+				<p class="mt-2 text-center text-sm text-white">@lista.NombreLista</p>
+				<p class="text-center text-sm text-gray-400">Likes: @lista.NumeroLikes</p>
+			</div>
+		</a>
+	}
+</div>
+
+<h1>Listas en las que colaboradora</h1>
+
+<div class="grid grid-cols-6 gap-4 max-sm:grid-cols-2 max-md:grid-cols-3 max-lg:grid-cols-4">
+
+	@foreach (var lista in Model.ListasColaborativasUser)
+	{
+		<a asp-controller="Listas" asp-action="Detalles" asp-route-id="@lista.IdLista">
+			<div class="lista-item cursor-pointer rounded-lg bg-gray-800 p-2">
+				<!-- Poster compuesto por 4 imágenes en grid de 2x2 -->
+				<div class="grid grid-cols-2 grid-rows-2 gap-1">
+					<img src="~/images/posters/@lista.Imagen1" alt="Imagen 1" class="aspect-[2/3] w-full rounded-tl-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen2" alt="Imagen 2" class="aspect-[2/3] w-full rounded-tr-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen3" alt="Imagen 3" class="aspect-[2/3] w-full rounded-bl-lg object-cover" />
+					<img src="~/images/posters/@lista.Imagen4" alt="Imagen 4" class="aspect-[2/3] w-full rounded-br-lg object-cover" />
+				</div>
+				<!-- Nombre de la lista y número de likes -->
+				<p class="mt-2 text-center text-sm text-white">@lista.NombreLista</p>
+			</div>
+		</a>
+	}
+</div>

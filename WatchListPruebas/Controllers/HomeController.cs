@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using WatchListPruebas.Models;
 using WatchListPruebas.Repositories;
@@ -16,15 +18,19 @@ namespace WatchListPruebas.Controllers
             this.repo = repo;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            
             return View();
         }
 
         public async Task<IActionResult> Privacy()
         {
-            List<ViewContenidoValorado> topPeliculas = await repo.GetTopContenidosAsync(2,6);
-            List<ViewContenidoValorado> topSeries = await repo.GetTopContenidosAsync(1,6);
+            List<ViewContenidoValorado> topPeliculas = await this.repo.GetTopContenidosAsync(2,6);
+            List<ViewContenidoValorado> topSeries = await this.repo.GetTopContenidosAsync(1,6);
+            List<ViewListaReproduccion> topListas = await this.repo.GetTopListas();
+
+            ViewData["toplistas"] = topListas;
 
             ListaContenidoValorado lista = new ListaContenidoValorado 
             { 

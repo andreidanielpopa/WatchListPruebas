@@ -1,0 +1,27 @@
+﻿@model ViewListaAmigos
+
+<h1> Añadir colaborador </h1>
+
+
+<form method="post" class="mx-auto max-w-sm rounded bg-white px-8 pb-8 pt-6 shadow-md">
+    <div class="mb-4">
+        <label for="usuario" class="mb-2 block text-sm font-bold text-gray-700">
+            Usuario:
+        </label>
+        <select name="idusuario" id="usuario" class="w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none focus:shadow-outline">
+            <option value="">Selecciona un usuario</option>
+            @if (Model.Amigos != null)
+            {
+                foreach (var amigo in Model.Amigos)
+                {
+                    <option value="@amigo.Id">@amigo.Nombre</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="flex items-center justify-between">
+        <button class="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none focus:shadow-outline">
+            Log In
+        </button>
+    </div>
+</form>

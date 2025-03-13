@@ -1,22 +1,23 @@
-﻿@{
-    string usuario = Context.Session.GetString("usuario");
-}
-
-@if (usuario == null)
+﻿@if (Context.User.Identity.IsAuthenticated == false)
 {
-    <li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="LogIn">LOG IN</a> </li>
+	<li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="Perfil">LOG IN</a> </li>
+	<li class="cursor-pointer"> <a asp-controller="Usuarios" asp-action="Registro">REGISTRO</a> </li>
 }
 else
 {
-    <li class="cursor-pointer">
-        <a asp-controller="Usuarios" asp-action="Perfil">
-            @usuario
-        </a>
-    </li>
+	<li class="cursor-pointer">
+		<a asp-controller="Usuarios" asp-action="Perfil">
+			@Context.User.Identity.Name
+		</a>
+	</li>
 
-    <li class="cursor-pointer">
-        <a asp-controller="Usuarios" asp-action="LogOut">
-            LOG OUT @usuario
-        </a>
-    </li>
+	<li class="cursor-pointer">
+		<div class="flex flex-row items-center gap-2">
+			<a asp-controller="Usuarios" asp-action="Logout">
+
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2"> <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path> <path d="M9 12h12l-3 -3"></path> <path d="M18 15l3 -3"></path> </svg>
+			</a>
+
+		</div>
+	</li>
 }

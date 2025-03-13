@@ -1,106 +1,229 @@
 ﻿@model ViewContenidoCompleto
 
 @{
-    var directoresValidos = Model.Directores.Where(d => d.Nombre != "-").ToList();
+	var directoresValidos = Model.Directores.Where(d => d.Nombre != "-").ToList();
+	List<ProgresoUsuarioContenido> progreso = ViewData["progeso"] as List<ProgresoUsuarioContenido>;
+	List<Contenido> meGustas = ViewData["megustas"] as List<Contenido>;
+	bool isLiked = meGustas != null && meGustas.Any(m => m.IdContenido == Model.Id);
 }
 
-<div class="mx-auto mt-10 max-w-4xl rounded-lg bg-gray-900 p-6 text-white shadow-lg">
-    <!-- Contenedor principal -->
-    <div class="flex items-start gap-4 max-md:flex-col max-md:items-center max-md:gap-6">
-        <!-- Imagen del contenido -->
-        <img src="~/images/posters/@Model.Imagen" alt="@Model.Nombre" class="h-72 w-52 rounded-lg object-cover shadow-lg">
+<div class="mx-auto mt-10 flex max-w-4xl flex-col gap-4 rounded-lg p-6 text-white shadow-lg">
+	<!-- Contenedor principal -->
+	<div class="flex items-start gap-4 max-md:flex-col max-md:items-center max-md:gap-6">
+		<!-- Imagen del contenido -->
+		<img src="~/images/posters/@Model.Imagen" alt="@Model.Nombre" class="h-72 w-52 rounded-lg object-cover shadow-lg">
 
-        <!-- Contenedor del texto -->
-        <div class="flex flex-col">
-            <div class="flex flex-wrap gap-3">
-                <h1 class="text-3xl font-bold text-yellow-400">@Model.Nombre</h1>
-                @foreach (var categoria in Model.Categorias)
-                {
-                    <span class="rounded-full border-[1px] border-slate-600/70 bg-slate-700/70 px-3 py-1 text-slate-400/80">@categoria.Nombre</span>
-                }
-            </div>
-            <p class="mt-2 text-gray-300">@Model.Descripcion</p>
-        </div>
-    </div>
+		<!-- Contenedor del texto -->
+		<div class="flex flex-col gap-4">
+			<div class="flex flex-row items-center gap-2">
+				<a asp-controller="Contenidos" asp-action="InsertContenidoLista" asp-route-idcontenido="@Model.Id"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" stroke-width="2"> <path d="M9 12h6"></path> <path d="M12 9v6"></path> <path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z"></path> </svg> </a>
+				@if (isLiked)
+				{
+					<!-- Corazón relleno (liked) -->
+					<a asp-controller="Contenidos" asp-action="RemoveMeGusta" asp-route-idContenido="@Model.Id" class="ml-2 inline border-none bg-transparent">
+						<svg width="32" height="32" viewBox="0 0 24 24" fill="#f00" xmlns="http://www.w3.org/2000/svg">
+							<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+						</svg>
+					</a>
+				}
+				else
+				{
+					<!-- Corazón sin rellenar (no liked) -->
+					<a asp-controller="Contenidos" asp-action="AddMeGusta" asp-route-idContenido="@Model.Id" class="ml-2 inline border-none bg-transparent">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" stroke-width="2"> <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path> </svg>
+					</a>
+				}
+			</div>
+			<div class="flex flex-wrap gap-3">
+				<h1 class="text-3xl font-bold text-yellow-400">@Model.Nombre</h1>
+				@foreach (var categoria in Model.Categorias)
+				{
+					<span class="rounded-full border-[1px] border-slate-600/70 bg-slate-700/70 px-3 py-1 text-slate-400/80">@categoria.Nombre</span>
+				}
+			</div>
+			<p class="mt-2 text-gray-300">@Model.Descripcion</p>
+		</div>
+	</div>
 
-    <!-- Temporadas y capítulos -->
-    <div class="mt-6 flex flex-col gap-4">
-        <h2 class="text-xl font-bold text-yellow-400">Temporadas</h2>
-        @foreach (var temporada in Model.Temporadas)
-        {
-            <div class="gap-4 rounded-lg bg-gray-800 p-4">
-                <div id="toggleSeason_@temporada.NumeroTemporada" class="flex cursor-pointer items-center gap-3">
-                    <h3 class="text-lg font-semibold text-white">@temporada.TituloTemporada</h3>
-                    <span class="h-[1px] flex-1 bg-slate-700"></span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M6 9l6 6l6 -6" />
-                    </svg>
-                </div>
-                <div id="seasonList_@temporada.NumeroTemporada" class="grid-rows-[0fr] transition-[grid-template-rows] grid duration-500">
-                    <ul class="mt-2 list-inside list-decimal overflow-hidden text-gray-300">
-                        @foreach (var capitulo in temporada.Capitulos)
-                        {
-                            <li>@capitulo.TituloCapitulo (@capitulo.Duracion min)</li>
-                        }
-                    </ul>
-                </div>
-                <script>
-                    $(document).ready(function () {
-                        const toggleSeason = $("#toggleSeason_@temporada.NumeroTemporada");
-                        const seasonList = $("#seasonList_@temporada.NumeroTemporada");
-                        toggleSeason.on("click", function () {
-                            toggleSeason.find('svg').toggleClass('rotate-180');
-                            seasonList.toggleClass('grid-rows-[1fr]');
-                        });
-                    });
-                </script>
-            </div>
-        }
-    </div>
+	<!-- Temporadas y capítulos -->
+	<div class="flex flex-col gap-4">
+		<h2 class="text-xl font-bold text-yellow-400">Temporadas</h2>
+		@foreach (var temporada in Model.Temporadas)
+		{
+			<div class="gap-4 rounded-lg bg-gray-800 p-4">
+				<div id="toggleSeason_@temporada.NumeroTemporada" class="flex cursor-pointer items-center gap-3">
+					<h3 class="text-lg font-semibold text-white">@temporada.TituloTemporada</h3>
+					<span class="h-[1px] flex-1 bg-slate-700"></span>
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<path d="M6 9l6 6l6 -6" />
+					</svg>
+				</div>
+				<div id="seasonList_@temporada.NumeroTemporada" class="grid-rows-[0fr] transition-[grid-template-rows] grid duration-500">
+					<ul class="mt-2 list-inside list-decimal overflow-hidden text-gray-300">
+						@foreach (var capitulo in temporada.Capitulos)
+						{
+							// Comprobamos si el capítulo está en la lista de progreso
+							bool isViewed = progreso != null && progreso.Any(p => p.IdCapitulo == capitulo.IdCapitulo);
+							<li>
+								@capitulo.TituloCapitulo (@capitulo.Duracion min)
+								@if (isViewed)
+								{
+									// Obtenemos el registro de progreso (suponemos que es único por capítulo)
+									var progresoRegistro = progreso.First(p => p.IdCapitulo == capitulo.IdCapitulo);
+									
+									<!-- Botón para desmarcar -->
+									<form method="post" asp-controller="Contenidos" asp-action="DeleteProgreso" class="inline">
+										<input type="hidden" name="idProgreso" value="@progresoRegistro.IdProgreso" />
+										<input type="hidden" name="idContenido" value="@Model.Id" />
+										<button type="submit" class="ml-2 mt-2 border-none bg-transparent font-bold text-yellow-400">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FACC15" width="24" height="24">
+												<path d="M12 4c4.29 0 7.863 2.429 10.665 7.154l.22 .379l.045 .1l.03 .083l.014 .055l.014 .082l.011 .1v.11l-.014 .111a.992 .992 0 0 1 -.026 .11l-.039 .108l-.036 .075l-.016 .03c-2.764 4.836 -6.3 7.38 -10.555 7.499l-.313 .004c-4.396 0 -8.037 -2.549 -10.868 -7.504a1 1 0 0 1 0 -.992c2.831 -4.955 6.472 -7.504 10.868 -7.504zm0 5a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z"></path>
+											</svg>
+										</button>
+									</form>
+								}
+								else
+								{
+									
+									<form method="post" asp-controller="Contenidos" asp-action="InsertProgreso" class="inline">
+										<input type="hidden" name="idCapitulo" value="@capitulo.IdCapitulo" />
+										<input type="hidden" name="idContenido" value="@Model.Id" />
+										<button type="submit" class="ml-2 mt-2 border-none bg-transparent font-bold text-white">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2">
+												<path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+												<path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+											</svg>
+										</button>
+									</form>
+								}
+							</li>
+						}
+					</ul>
 
-    @if (directoresValidos.Any())  // Si hay directores válidos, renderizar el div
-    {
-        <div class="mt-4">
-            <h2 class="text-xl font-bold text-yellow-400">Directores</h2>
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-                @foreach (var director in directoresValidos)
-                {
-                    <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
-                        <img src="~/images/directores/@director.ImagenDirector" class="mx-auto h-24 w-24 rounded-full object-cover">
-                        <p class="mt-2 font-semibold text-white">@director.Nombre</p>
-                    </div>
-                }
-            </div>
-        </div>
-    }
 
-    <!-- Actores en Cards -->
-    <div class="mt-4">
-        <h2 class="text-xl font-bold text-yellow-400">Actores</h2>
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-            @foreach (var actor in Model.Actores)
-            {
-                <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
-                    <img src="~/images/actores/@actor.ImagenActor" class="mx-auto h-24 w-24 rounded-full object-cover">
-                    <p class="mt-2 font-semibold text-white">@actor.Nombre</p>
-                    <p class="text-sm text-gray-400">@actor.NombrePersonaje</p>
-                </div>
-            }
-        </div>
-    </div>
 
-    <!-- Plataformas en Cards -->
-    <div class="mt-4">
-        <h2 class="text-xl font-bold text-yellow-400">Disponible en</h2>
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-            @foreach (var plataforma in Model.Plataformas)
-            {
-                <div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
-                    <img src="~/images/plataformas/@plataforma.ImagenPlataforma" class="mx-auto h-16 w-16 object-cover">
-                    <p class="mt-2 font-semibold text-white">@plataforma.Nombre</p>
-                </div>
-            }
-        </div>
-    </div>
+				</div>
+				<script>
+					$(document).ready(function () {
+						const toggleSeason = $("#toggleSeason_@temporada.NumeroTemporada");
+						const seasonList = $("#seasonList_@temporada.NumeroTemporada");
+						toggleSeason.on("click", function () {
+							toggleSeason.find('svg').toggleClass('rotate-180');
+							seasonList.toggleClass('grid-rows-[1fr]');
+						});
+					});
+				</script>
+			</div>
+		}
+	</div>
+
+	<div class="flex flex-col gap-2">
+		<h2 class="text-xl font-bold text-yellow-400">Valoraciones</h2>
+
+		<a asp-controller="Contenidos" asp-action="InsertValoracion" asp-route-idContenido="@Model.Id" class="w-full rounded-lg bg-yellow-400 p-3 text-center font-bold transition-colors hover:bg-yellow-500">Añadir Valoracion</a>
+		<div class="space-y-4">
+			@foreach (var valoracion in Model.Valoraciones)
+			{
+				<div class="rounded-lg bg-gray-800 p-4 shadow-lg">
+					<div class="flex items-center justify-between">
+						<span class="font-bold text-white">@valoracion.NombreUsuario</span>
+						<span class="text-sm text-gray-300">@valoracion.FechaCreacion.ToString("dd/MM/yyyy")</span>
+					</div>
+					<div class="mt-2">
+						<span class="font-semibold text-yellow-400">Nota: @valoracion.Nota</span>
+					</div>
+					@if (!string.IsNullOrEmpty(valoracion.Opinion))
+					{
+						<p class="mt-2 text-gray-300">@valoracion.Opinion</p>
+					}
+				</div>
+			}
+		</div>
+	</div>
+
+	<h2 class="text-xl font-bold text-yellow-400">Créditos</h2>
+	@if (directoresValidos.Any())  // Si hay directores válidos, renderizar el div
+	{
+		<div class="gap-4 rounded-lg bg-gray-800 p-4">
+			<div id="toggleDirectors" class="flex cursor-pointer items-center gap-3">
+				<h3 class="text-lg font-semibold text-white">Directores</h3>
+				<span class="h-[1px] flex-1 bg-slate-700"></span>
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path d="M6 9l6 6l6 -6" />
+				</svg>
+			</div>
+			<div id="directorsList" class="grid-rows-[0fr] transition-[grid-template-rows] grid duration-500">
+				<div class="grid grid-cols-2 gap-4 overflow-hidden md:grid-cols-3">
+					@foreach (var director in directoresValidos)
+					{
+						<div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
+							<img src="~/images/directores/@director.ImagenDirector" class="mx-auto h-24 w-24 rounded-full object-cover">
+							<p class="mt-2 font-semibold text-white">@director.Nombre</p>
+						</div>
+					}
+				</div>
+			</div>
+
+			<script>
+				$(document).ready(function () {
+					const toggleDirectors = $("#toggleDirectors");
+					const directorsList = $("#directorsList");
+					toggleDirectors.on("click", function () {
+						toggleDirectors.find('svg').toggleClass('rotate-180');
+						directorsList.toggleClass('grid-rows-[1fr]');
+					});
+				});
+			</script>
+		</div>
+	}
+
+	<!-- Actores en Cards -->
+	<div class="gap-4 rounded-lg bg-gray-800 p-4">
+		<div id="toggleActors" class="flex cursor-pointer items-center gap-3">
+			<h3 class="text-lg font-semibold text-white">Actores</h3>
+			<span class="h-[1px] flex-1 bg-slate-700"></span>
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500">
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M6 9l6 6l6 -6" />
+			</svg>
+		</div>
+		<div id="actorsList" class="grid-rows-[0fr] transition-[grid-template-rows] grid duration-500">
+			<div class="grid grid-cols-2 gap-4 overflow-hidden md:grid-cols-3">
+				@foreach (var actor in Model.Actores)
+				{
+					<div class="rounded-lg bg-gray-800 p-3 text-center shadow-lg">
+						<img src="~/images/actores/@actor.ImagenActor" class="mx-auto h-24 w-24 rounded-full object-cover">
+						<p class="mt-2 font-semibold text-white">@actor.Nombre</p>
+						<p class="text-sm text-gray-400">@actor.NombrePersonaje</p>
+					</div>
+				}
+			</div>
+		</div>
+		<script>
+			$(document).ready(function () {
+				const toggleActors = $("#toggleActors");
+				const actorsList = $("#actorsList");
+				toggleActors.on("click", function () {
+					toggleActors.find('svg').toggleClass('rotate-180');
+					actorsList.toggleClass('grid-rows-[1fr]');
+				});
+			});
+		</script>
+	</div>
+
+	<!-- Plataformas en Cards -->
+	<div class="flex flex-col gap-2">
+		<h2 class="text-xl font-bold text-yellow-400">Disponible en</h2>
+		<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+			@foreach (var plataforma in Model.Plataformas)
+			{
+				<div class="rounded-lg text-center shadow-lg">
+					<img src="~/images/plataformas/@plataforma.ImagenPlataforma" class="mx-auto h-16 w-16 object-cover">
+					<p class="mt-2 font-semibold text-white">@plataforma.Nombre</p>
+				</div>
+			}
+		</div>
+	</div>
 </div>

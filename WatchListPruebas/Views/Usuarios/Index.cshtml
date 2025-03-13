@@ -1,6 +1,6 @@
 ﻿@model List<ViewListadoUsuarios>
 @{
-    string user = Context.Session.GetString("usuario");
+    string user = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
     ViewListaAmigos amigos = ViewData["amigos"] as ViewListaAmigos;
     ViewListaAmigos pendientes = ViewData["pendientes"] as ViewListaAmigos;
@@ -12,7 +12,7 @@
             if (usuario.IdUsuario.ToString() != user)
             {
                 <div class="usuario-item rounded-lg bg-gray-800 p-4">
-                    <a asp-controller="Usuarios" asp-action="Perfil" asp-route-idusuario="@usuario.IdUsuario" class="block cursor-pointer">
+                    <a asp-controller="Usuarios" asp-action="DetallePerfil" asp-route-idusuario="@usuario.IdUsuario" class="block cursor-pointer">
                         <img src="~/images/perfil/@usuario.NombreArchivoFoto" alt="@usuario.Nombre" class="mx-auto h-20 w-20 rounded-full" />
                         <h4 class="mt-2 text-center text-lg font-semibold">@usuario.Nombre</h4>
                         <p class="text-center text-sm">Contenidos vistos: @usuario.ContenidosVistos</p>

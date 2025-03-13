@@ -1,34 +1,25 @@
-﻿<div class="mx-auto max-w-md rounded-lg bg-white p-6 text-stone-950 shadow-md">
-    <h1 class="mb-4 text-2xl font-bold text-gray-800">Create lista</h1>
+﻿<div class="mx-auto mt-10 flex max-w-md flex-col gap-4 rounded-lg bg-gray-800 p-6 text-white shadow-lg">
+	<h1 class="text-2xl font-bold text-yellow-400">Crear nueva lista</h1>
+	<form method="post" class="flex flex-col gap-4">
+		<div class="flex flex-col gap-2">
+			<label class="font-medium text-gray-300">Nombre</label>
+			<input type="text" name="nombre" value="" class="rounded-md border border-slate-600 bg-slate-700/70 px-3 py-2 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none" placeholder="Nombre de la lista" />
+		</div>
+		<input type="hidden" name="idusuario" value="@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value" class="rounded-md border border-slate-600 bg-slate-700/70 px-3 py-2 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none" />
 
-    <form method="post" class="space-y-4">
-        <div>
-            <label class="block font-medium text-gray-700">Nombre</label>
-            <input type="text" name="nombre" value="" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
+		<input type="hidden" name="idtipolista" value="3" class="rounded-md border border-slate-600 bg-slate-700/70 px-3 py-2 text-white focus:border-yellow-400 focus:outline-none" />
 
-        <div>
-            <label class="block font-medium text-gray-700">Id Usuario</label>
-            <input type="text" name="idusuario" value="@Context.Session.GetString("usuario")" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
+		<div class="flex flex-col gap-2">
+			<label class="font-medium text-gray-300">Visibilidad</label>
+			<select name="espublica" class="rounded-md border border-slate-600 bg-slate-700/70 px-3 py-2 text-white focus:border-yellow-400 focus:outline-none">
+				<option value="true">Pública</option>
+				<option value="false">Privada</option>
+			</select>
+		</div>
 
-        <div>
-            <label class="block font-medium text-gray-700">Tipo de lista</label>
-            <input type="text" name="idtipolista" value="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <input type="hidden" name="esadmin" value="1" />
-
-        <div>
-            <label class="block font-medium text-gray-700">Publica o privada</label>
-            <select name="espublica" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="1">Pública</option>
-                <option value="0">Privada</option>
-            </select>
-        </div>
-
-        <button type="submit" class="w-full rounded-md bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
-            Crear lista
-        </button>
-    </form>
+		<button type="submit" class="mt-2 w-full rounded-lg bg-yellow-400 p-3 text-center font-bold text-gray-900 transition-colors hover:bg-yellow-500">
+			Crear lista
+		</button>
+		</a>
+	</form>
 </div>

@@ -29,6 +29,18 @@ namespace WatchListPruebas.Data
 
         public DbSet<AmigoTable> AmigosTable { get; set; }
 
+        public DbSet<ViewListaColaborativa> ListasColaborativas { get; set; }
+
+        public DbSet<ColaboradorLista> ColaboradoresListas { get; set; }
+
+        public DbSet<Valoracion> Valoraciones { get; set; }
+
+        public DbSet<ProgresoUsuarioContenido> ProgresosUsuarioContenidos { get; set; }
+
+        public DbSet<Progreso> Progresos { get; set; }
+
+        public DbSet<ListaLike> ListaLikes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ListaContenidos>()
@@ -36,6 +48,12 @@ namespace WatchListPruebas.Data
 
             modelBuilder.Entity<AmigoTable>()
                         .HasKey(a => new { a.IdUsuario1, a.IdUsuario2 });
+
+            modelBuilder.Entity<ColaboradorLista>()
+                        .HasKey(c => new { c.IdLista , c.IdUsuario });
+
+            modelBuilder.Entity<ListaLike>()
+                        .HasKey(c => new { c.IdUsuario, c.IdLista });
         }
 
 

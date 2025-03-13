@@ -1,7 +1,7 @@
 ﻿@model List<ViewContenidoValorado>
 <div class="bg-slate-900 py-5">
     <h3 class="mb-4 text-2xl font-bold">@ViewData["Title"]</h3>
-    <div class="grid grid-cols-6 gap-4 max-sm:grid-cols-3 max-lg:grid-cols-4">
+    <div class="grid grid-cols-6 justify-between gap-4 max-sm:grid-cols-2 max-xl:grid-cols-3">
         @foreach (var serie in Model)
         {
             <a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@serie.Id_Contenido">

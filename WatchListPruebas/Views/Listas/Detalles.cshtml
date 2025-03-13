@@ -1,28 +1,47 @@
 ﻿@model ViewDetalleListaReproduccion
 
-<div class="mx-auto max-w-4xl rounded-lg bg-gray-800 p-6 shadow-md">
-	<h1 class="text-yellow-400">@Model.NombreLista</h1> 
-	<div class="mt-4 text-3xl font-bold">
-		<h2 class="mb-2 text-lg font-semibold text-yellow-400">Contenidos en la lista:</h2>
+@{
+	// Supongamos que ViewData["isLiked"] es un booleano que indica si el usuario ha dado like a la lista.
+	bool isLiked = ViewData["isLiked"] != null && (bool)ViewData["isLiked"];
+}
 
+<div class="flex flex-col gap-4">
+	<div class="flex flex-row items-center gap-2">
+		<h1 class="text-3xl font-bold text-yellow-400">@Model.NombreLista</h1>
+		@if (isLiked)
+		{
+			<!-- Corazón relleno: enlace para quitar el like -->
+			<a asp-controller="Listas" asp-action="RemoveListaLike" asp-route-idLista="@Model.IdLista" class="ml-2 inline border-none bg-transparent">
+				<svg width="32" height="32" viewBox="0 0 24 24" fill="#f00" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+				</svg>
+			</a>
+		}
+		else
+		{
+			<!-- Corazón sin rellenar: enlace para dar like -->
+			<a asp-controller="Listas" asp-action="AddListaLike" asp-route-idLista="@Model.IdLista" class="ml-2 inline border-none bg-transparent">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" stroke-width="2"> <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path> </svg>
+			</a>
+		}
 
-		<div class="grid grid-cols-6 gap-4">
-			@foreach (var contenido in Model.Contenidos)
-			{
-				<a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@contenido.IdContenido">
-					<div class="contenido-item cursor-pointer">
-						<img src="~/images/posters/@contenido.ImagenContenido" alt="@contenido.Titulo" class="w-full rounded-lg" />
-						<p class="mt-2 text-center text-sm"> @contenido.Titulo</p>
-					</div>
-				</a>
-			}
-			<a asp-controller="Listas" asp-action="InsertContenidoLista" asp-route-idlista="@Model.IdLista" class="text font-extrabold text-white">Añadir contenido</a>
-		</div>
+		<a asp-controller="Listas" asp-action="AddColaboradorLista" asp-route-idlista="@Model.IdLista"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" stroke-width="2"> <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path> <path d="M16 19h6"></path> <path d="M19 16v6"></path> <path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path> </svg> </a>
+	</div>
+</div>
+<div class="mt-4 text-3xl font-bold">
 
+	<div class="grid grid-cols-6 gap-4">
+		@foreach (var contenido in Model.Contenidos)
+		{
+			<a asp-controller="Contenidos" asp-action="Detalles" asp-route-idcontenido="@contenido.IdContenido">
+				<div class="contenido-item cursor-pointer">
+					<img src="~/images/posters/@contenido.ImagenContenido" alt="@contenido.Titulo" class="aspect-[2/3] w-full rounded-lg object-cover" />
+					<p class="mt-2 text-center text-sm"> @contenido.Titulo</p>
+				</div>
+			</a>
+		}
 	</div>
 
-	<a href="@Url.Action("Index", "Listas")"
-	   class="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700">
-		Volver a Listas
-	</a>
 </div>
+
+
